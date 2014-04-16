@@ -1,0 +1,13 @@
+{
+  "name": "iridium",
+  "description": "Lets talk to satelites",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "cli-color": "*",
+    "async": "*",
+    "serialport": "*",
+    "exec-sync": "*",
+    "dateformat": "*"
+  }
+}
