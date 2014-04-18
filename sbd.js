@@ -6,7 +6,6 @@
 var iridium = require("./iridium.js");
 var sys = require('sys');
 var zlib = require('zlib');
-var execSync = require('exec-sync');
 var dateFormat = require('dateformat');
 
 
@@ -16,18 +15,19 @@ var lock = 0;
 // always do your work AFTER the 'initialized' event is received!
 iridium.on('initialized', function() {
     sys.log("[SBD] IRIDIUM INITIALIZED");
-    
+
     // The lines below send the exact same message
     // use sendMessage or sendBinaryMessage for text
     // use only sendBinaryMessage for binary messages
-    
+
     //sendBinaryMessage("hello");
     //sendBinaryMessage(new Buffer("68656c6c6f", "hex"));
     iridium.getSystemTime(function(err, ctime) {
         sys.log("Current Iridium time is "+ctime);
         var fdate = dateFormat(ctime, "mmddHHMMyyyy.ss");
-        execSync("date "+fdate);
+        // execSync("date "+fdate);
         sys.log("Date set from Iridium time");
+        sendMessage("Hello Noel");
     })
 
 // to send a compressed text message use sendCompressedMessage - on the other end use ZLib Deflate to uncompress it
@@ -112,11 +112,5 @@ function sendBinaryMessage(buffer) {
 
 iridium.open({
     debug: 1,
-    port: "/dev/ttyUSB0"
+    port: "/dev/tty.usbserial-8254"
 });
-
-
-
-
-
-

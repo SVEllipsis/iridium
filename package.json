@@ -7,7 +7,6 @@
     "cli-color": "*",
     "async": "*",
     "serialport": "*",
-    "exec-sync": "*",
     "dateformat": "*"
   }
 }
