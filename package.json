@@ -7,6 +7,7 @@
     "cli-color": "*",
     "async": "*",
     "serialport": "*",
-    "dateformat": "*"
+    "dateformat": "*",
+    "redis": "*"
   }
 }
