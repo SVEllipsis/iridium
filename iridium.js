@@ -37,11 +37,11 @@ var TIMEOUT_FOREVER = -1;
 // corresponding handling functions
 var unsollicited = {
     "SBDRING": {
-        pattern: /^SBDRING/, 
+        pattern: /^SBDRING/,
         execute: sbdring
     },
     "AREG": {
-        pattern: /^\+AREG/, 
+        pattern: /^\+AREG/,
         execute: areg
     }
 };
@@ -78,7 +78,7 @@ function sendBinaryMessage(message, callback, maxWait) {
         return;
     }
 
-    var buffer = (message instanceof Buffer)?message:new Buffer(message);	
+    var buffer = (message instanceof Buffer)?message:new Buffer(message);
 
     var command = "AT+SBDWB="+buffer.length;
 
@@ -91,10 +91,10 @@ function sendBinaryMessage(message, callback, maxWait) {
     ob[buffer.length+1]=sum&0xff;
     sum>>=8;
     ob[buffer.length]=sum&0xff;
-    
-   
 
-    // first write the binary message to storage - issue AT+SBDWB and wait for the modem to say READY 
+
+
+    // first write the binary message to storage - issue AT+SBDWB and wait for the modem to say READY
     AT(command, /READY/, ALL, function(err, text) {
 
         if (err) {
@@ -118,7 +118,7 @@ function sendBinaryMessage(message, callback, maxWait) {
 
             messagePending = 1;
             waitForNetwork(function(xerr) {
-       
+
                 if (xerr) {
                     messagePending = 0;
                     clearMOBuffers(function() {
@@ -148,11 +148,11 @@ exports.sendBinaryMessage = sendBinaryMessage;
 function sendMessage(message, callback, maxWait) {
 
     // if no message is given, this is a mailbox check, so clear the MO storage
-    var command = message?"AT+SBDWT="+message:"AT+SBDD0"; 
-   
+    var command = message?"AT+SBDWT="+message:"AT+SBDD0";
+
     // write the MO message, wait for network (+CIEV event)
     // disable signal monitoring (+CIER=0) then send the message (+SBDIXA)
- 
+
     AT(command, OK, ALL, function(err, text) {
 
         if (err) {
@@ -165,7 +165,7 @@ function sendMessage(message, callback, maxWait) {
 
         messagePending = 1;
         waitForNetwork(function(xerr) {
-       
+
             if (xerr) {
                 messagePending = 0;
                 clearMOBuffers(function() {
@@ -186,7 +186,7 @@ function sendMessage(message, callback, maxWait) {
 
 // export this function so that it can be called from any code requiring this
 exports.sendMessage = sendMessage;
-	
+
 
 var serialPort;
 var data = "";
@@ -249,7 +249,7 @@ function open(config) {
             delete(er);
             return;
         }
-	
+
         for (x in unsollicited) {
             if (unsollicited[x].pattern.test(data)) {
                 unsollicited[x].execute(data);
@@ -266,7 +266,7 @@ function open(config) {
                 return;
             }
         }
- 
+
 
         if (!kr || kr.test(data)) {
             buffer+=(data+"\n");
@@ -277,7 +277,7 @@ function open(config) {
             delete(df);
             delete(er);
 
-	
+
 
         }
     });
@@ -337,13 +337,13 @@ function getSystemTime(callback) {
                 var ctime = new Date(Date.UTC(2000+Number(m[1]), m[2]-1, m[3], m[4], m[5], m[6]));
                 callback(null, ctime);
             }
-	
+
         }
     });
 }
 exports.getSystemTime = getSystemTime;
-		
-	
+
+
 
 function disableSignalMonitoring(callback) {
     ATS("AT+CIER=0,0,0,0", OK, ALL, callback, SIMPLE_COMMAND_TIMEOUT);
@@ -420,7 +420,7 @@ function readMessage(mtqueued, callback) {
         clearMTBuffers(callback);
     }, SIMPLE_COMMAND_TIMEOUT);
 }
-			
+
 // most important function, initiates a SBD session and sends/receives messages
 function initiateSession(callback) {
     AT("AT+SBDIXA", OK, /\+SBDIX/, function(err, text) {
@@ -466,7 +466,7 @@ function initiateSession(callback) {
             });
             return;
         }
-      
+
 
         if (mtqueued>0) {
             log("There are still "+mtqueued+" messages waiting!");
@@ -480,7 +480,7 @@ function initiateSession(callback) {
                 clearMOBuffers(function(err) {
                     callback(err, momsn);
                 });
-			
+
             }
             );
             return;
