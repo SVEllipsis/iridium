@@ -7,6 +7,7 @@ var iridium = require("./iridium.js");
 var sys = require('sys');
 var zlib = require('zlib');
 var dateFormat = require('dateformat');
+var execSync = require('exec-sync');
 var redis = require("redis"),
 
 redis_client = redis.createClient();
