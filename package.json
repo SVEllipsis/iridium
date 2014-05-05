@@ -6,6 +6,7 @@
   "dependencies": {
     "cli-color": "*",
     "async": "*",
+    "exec-sync": "*",
     "serialport": "*",
     "dateformat": "*",
     "redis": "*"
