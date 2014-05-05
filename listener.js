@@ -30,6 +30,8 @@ iridium.on('initialized', function() {
     iridium.getSystemTime(function(err, ctime) {
         sys.log("Current Iridium time is "+ctime);
         var fdate = dateFormat(ctime, "mmddHHMMyyyy.ss");
+	execSync("sudo date "+fdate);
+        sys.log("Date set from Iridium time");
     })
 });
 

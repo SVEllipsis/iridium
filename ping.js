@@ -29,6 +29,7 @@ iridium.on('initialized', function() {
         var fdate = dateFormat(ctime, "mmddHHMMyyyy.ss");
     });
     sendMessage("ping");
+    process.exit(1);
 });
 
 iridium.on('ringalert', function() {
