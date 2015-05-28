@@ -8,9 +8,6 @@ var sys = require('sys');
 var zlib = require('zlib');
 var dateFormat = require('dateformat');
 var execSync = require('exec-sync');
-var redis = require("redis"),
-
-redis_client = redis.createClient();
 
 var pending = 0;
 var lock = 0;
@@ -19,7 +16,7 @@ sys.log("Welcome to the Ellipsis Global Interconnecting Gateway")
 
 iridium.open({
     debug: 0,
-    port: "/dev/ttyUSB0"
+    port: "/dev/tty.usbserial-8254"
 });
 
 /*
@@ -31,8 +28,6 @@ iridium.on('initialized', function() {
     iridium.getSystemTime(function(err, ctime) {
         sys.log("Current Iridium time is "+ctime);
         var fdate = dateFormat(ctime, "mmddHHMMyyyy.ss");
-	execSync("sudo date "+fdate);
-        sys.log("Date set from Iridium time");
     })
 });
 
@@ -43,25 +38,8 @@ iridium.on('ringalert', function() {
 
 iridium.on('newmessage', function(message, queued) {
     sys.log("[SBD] Received new message "+message);
-    mt_client = redis.createClient();
-    mt_client.publish("mt", message);
     sys.log("[SBD] There are "+queued+" messages still waiting");
     pending = queued;
-});
-
-/*
-  REDIS Listeners
-*/
-
-redis_client.on("ready", function () {
-    redis_client.subscribe("mo");
-});
-
-redis_client.on("message", function (channel, message) {
-    console.log(channel + ":" + message);
-    if (channel == "mo"){
-      sendMessage(message);
-    }
 });
 
 

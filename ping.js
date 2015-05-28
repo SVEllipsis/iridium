@@ -15,7 +15,7 @@ sys.log("Welcome to the Ellipsis Global Interconnecting Gateway")
 
 iridium.open({
     debug: 0,
-    port: "/dev/ttyUSB0"
+    port: "/dev/tty.usbserial-8254"
 });
 
 /*
