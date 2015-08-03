@@ -9,6 +9,7 @@
     "exec-sync": "*",
     "serialport": "*",
     "dateformat": "*",
-    "redis": "*"
+    "redis": "*",
+    "prompt": "*"
   }
 }

@@ -3,19 +3,22 @@
 // Version 1.5 (2012-12-28)
 // (C) 2012 Razvan Dragomirescu <razvan.dragomirescu@veri.fi>
 
+var prompt = require('prompt');
 var iridium = require("./iridium.js");
-var sys = require('sys');
 var zlib = require('zlib');
 var dateFormat = require('dateformat');
 
 var pending = 0;
 var lock = 0;
 
-sys.log("Welcome to the Ellipsis Global Interconnecting Gateway")
+console.log("Welcome to the Ellipsis Global Gateway\r\n");
+console.log("......now conecting to iridium........\r\n");
+
+prompt.start();
 
 iridium.open({
     debug: 0,
-    port: "/dev/ttyUSB0"
+    port: "/dev/tty.usbserial-8254"
 });
 
 /*
@@ -23,23 +26,29 @@ iridium.open({
 */
 
 iridium.on('initialized', function() {
-    sys.log("[SBD] IRIDIUM INITIALIZED");
-    iridium.getSystemTime(function(err, ctime) {
-        sys.log("Current Iridium time is "+ctime);
-        var fdate = dateFormat(ctime, "mmddHHMMyyyy.ss");
+    console.log("...........CONNECTED!..................\r\n")
+    console.log("Lets get transmitting: \r\n")
+
+    prompt.get(['latitude', 'longitude', 'message'], function (err, result) {
+      if (err) { return onErr(err); }
+
+      message = result.latitude+","+result.longitude+","+result.message;
+
+      console.log("......now sending........");
+      console.log(message);
+      sendMessage(message);
+
     });
-    sendMessage("ping");
-    process.exit(1);
 });
 
 iridium.on('ringalert', function() {
-    sys.log("[SBD] RING ALERT");
+    console.log("[SBD] RING ALERT");
     mailboxCheck();
 });
 
 iridium.on('newmessage', function(message, queued) {
-    sys.log("[SBD] Received new message "+message);
-    sys.log("[SBD] There are "+queued+" messages still waiting");
+    console.log("[SBD] Received new message "+message);
+    console.log("[SBD] There are "+queued+" messages still waiting");
     pending = queued;
 });
 
@@ -61,7 +70,7 @@ function sendMessage(text) {
     lock=1;
     iridium.sendMessage(text, function(err, momsn) {
         if (err==null) {
-            if (text) sys.log("[SBD] Message sent successfully, assigned MOMSN "+momsn);
+            if (text) console.log("[SBD] Message sent successfully, assigned MOMSN "+momsn);
 
             // check to see if there are other messages pending - if there are, send a new mailbox check to fetch them in 1 second
             if (pending>0) setTimeout(function() {
@@ -71,7 +80,7 @@ function sendMessage(text) {
                 lock=0;
             }
         } else {
-            sys.log("[SBD] Iridium returned error "+err+", will retry in 20s");
+            console.log("[SBD] Iridium returned error "+err+", will retry in 20s");
             setTimeout(function() {
                 sendMessage(text);
             }, 20000);
@@ -84,7 +93,7 @@ function sendBinaryMessage(buffer) {
     lock=1;
     iridium.sendBinaryMessage(buffer, function(err, momsn) {
         if (err==null) {
-            if (buffer) sys.log("[SBD] Binary message sent successfully, assigned MOMSN "+momsn);
+            if (buffer) console.log("[SBD] Binary message sent successfully, assigned MOMSN "+momsn);
 
             // check to see if there are other messages pending - if there are, send a new mailbox check to fetch them in 1 second
             if (pending>0) setTimeout(function() {
@@ -94,7 +103,7 @@ function sendBinaryMessage(buffer) {
                 lock=0;
             }
         } else {
-            sys.log("[SBD] Iridium returned error "+err+", will retry in 20s");
+            console.log("[SBD] Iridium returned error "+err+", will retry in 20s");
             setTimeout(function() {
                 sendBinaryMessage(buffer);
             }, 20000);
